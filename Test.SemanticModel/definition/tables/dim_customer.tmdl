@@ -1,0 +1,52 @@
+table dim_customer
+	lineageTag: 34238ad6-08a2-4aff-8606-42c77b041c5b
+
+	column Customer_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: a768afd7-7540-4fe0-a66b-3bcf0c59038e
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Name
+		dataType: string
+		lineageTag: af53a578-d83f-41e7-83cf-c099aa40998e
+		summarizeBy: none
+		sourceColumn: Customer_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Region
+		dataType: string
+		lineageTag: b4edaee9-19f1-4972-8c37-db4dd2434b11
+		summarizeBy: none
+		sourceColumn: Customer_Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Type
+		dataType: string
+		lineageTag: dfcecbf9-92a2-4061-92f8-210de0b3f1b8
+		summarizeBy: none
+		sourceColumn: Customer_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs("adb-6672695159677553.13.azuredatabricks.net", "sql/protocolv1/o/6672695159677553/0620-124008-9oevs18i", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    nokia_poc_Schema = hive_metastore_Database{[Name="nokia_poc",Kind="Schema"]}[Data],
+				    dim_customer_Table = nokia_poc_Schema{[Name="dim_customer",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dim_customer_Table,{{"Customer_ID", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

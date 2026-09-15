@@ -1,0 +1,61 @@
+relationship AutoDetected_d12c1a53-6687-48fa-886d-1355f60aa6b4
+	fromColumn: fact_customer_tickets.Customer_ID
+	toColumn: dim_customer.Customer_ID
+
+relationship AutoDetected_9bde7a3c-6ff5-4efe-99c0-ac3648fd0287
+	fromColumn: fact_customer_tickets.Escalation_ID
+	toColumn: dim_escalations.Escalation_ID
+
+relationship AutoDetected_bfbe24e5-8c6d-41f2-92ff-30c23172070f
+	fromColumn: fact_customer_tickets.Issue_Type_ID
+	toColumn: dim_issues.Issue_Type_ID
+
+relationship e58e464f-b07e-a6ae-9b93-e3a22de0bf63
+	fromColumn: fact_customer_tickets.Date
+	toColumn: Dim_Calendar.Date
+
+relationship 1b32b63f-a6bb-4807-b209-faed2345cfb9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.Date
+	toColumn: LocalDateTable_9fbf4bfb-2635-42dc-9908-755b2755b545.Date
+
+relationship cca90aa1-1f0c-4c80-9d26-6b84d07459c1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Year Start Date'
+	toColumn: LocalDateTable_c5979d82-225f-46e8-a649-3c6d60b5e22d.Date
+
+relationship c8c5b5ab-93b6-4d91-b76c-b9c959f8b277
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Year End Date'
+	toColumn: LocalDateTable_1142e10f-9600-4a1b-9f57-6eaa945cb894.Date
+
+relationship c1d71ed2-dec5-4c82-9f34-fa0d16482b36
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Quarter Start Date'
+	toColumn: LocalDateTable_e1cb4d0e-7558-4616-b3cf-5134357d26e2.Date
+
+relationship 42fec5d9-060f-47b6-8c27-540206dd4439
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Quarter End Date'
+	toColumn: LocalDateTable_da20d1b1-348e-4e44-a029-54c871af56b3.Date
+
+relationship a7f32b12-0669-4bb1-b1a6-b5391cebd581
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Month Start Date'
+	toColumn: LocalDateTable_5c9a9317-560c-47a9-86b0-af39ef84bed8.Date
+
+relationship 9daeac08-3c54-4c1b-aeb4-5aefbd009566
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Month End Date'
+	toColumn: LocalDateTable_1edcf206-7e3a-44b7-ae6a-af8c95f908fe.Date
+
+relationship c87222b6-b7c9-43f1-a945-f5894d56475e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Week Start Date'
+	toColumn: LocalDateTable_d8a39c22-cc12-4f32-a88c-40d44e3dec0d.Date
+
+relationship 046e63dc-0c03-49d7-8143-50523cd804d5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Calendar.'Week End Date'
+	toColumn: LocalDateTable_9040d17c-b124-4e9b-9671-ca921558155a.Date
+

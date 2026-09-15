@@ -1,0 +1,44 @@
+table dim_escalations
+	lineageTag: c1516f3d-c9a1-4a49-a3b9-7a49efdfe55d
+
+	column Escalation_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 210bd1a2-b506-4d31-ae02-442e8c2201b8
+		summarizeBy: none
+		sourceColumn: Escalation_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Escalation_Type
+		dataType: string
+		lineageTag: dc00fd8b-5b8c-4ace-8c55-f02c11949413
+		summarizeBy: none
+		sourceColumn: Escalation_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Escalation_Reason
+		dataType: string
+		lineageTag: b574f1c8-d515-469e-bf93-a88e89be91b2
+		summarizeBy: none
+		sourceColumn: Escalation_Reason
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_escalations = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs("adb-6672695159677553.13.azuredatabricks.net", "sql/protocolv1/o/6672695159677553/0620-124008-9oevs18i", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    nokia_poc_Schema = hive_metastore_Database{[Name="nokia_poc",Kind="Schema"]}[Data],
+				    dim_escalations_Table = nokia_poc_Schema{[Name="dim_escalations",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dim_escalations_Table,{{"Escalation_ID", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

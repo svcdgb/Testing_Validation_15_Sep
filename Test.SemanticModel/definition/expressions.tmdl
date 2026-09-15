@@ -1,0 +1,15 @@
+expression dim_date =
+		let
+		    Source = Databricks.Catalogs("adb-6672695159677553.13.azuredatabricks.net", "sql/protocolv1/o/6672695159677553/0620-124008-9oevs18i", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+		    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+		    nokia_poc_Schema = hive_metastore_Database{[Name="nokia_poc",Kind="Schema"]}[Data],
+		    dim_date_Table = nokia_poc_Schema{[Name="dim_date",Kind="Table"]}[Data],
+		    #"Changed Type" = Table.TransformColumnTypes(dim_date_Table,{{"DateID", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: c26d360e-fe80-4d30-8b8c-66dda584adda
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

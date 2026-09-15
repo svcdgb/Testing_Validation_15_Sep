@@ -1,0 +1,364 @@
+table fact_customer_tickets
+	lineageTag: 25f8f27d-9639-45dd-94e8-21ee6e9c6ba7
+
+	measure Total_Tickets = DISTINCTCOUNT(fact_customer_tickets[Ticket_ID])
+		formatString: 0
+		lineageTag: bea053ea-a342-4c77-835b-b83669b3f63a
+
+	measure Tickets_Resolved = CALCULATE(DISTINCTCOUNT(fact_customer_tickets[Ticket_ID]),NOT(ISBLANK(fact_customer_tickets[Resolution_Time])))
+		formatString: 0
+		lineageTag: 23c0e43e-8f61-4e9a-ae64-c67ca740b44f
+
+	measure Tickets_Escalated = CALCULATE(DISTINCTCOUNT(fact_customer_tickets[Ticket_ID]), NOT(ISBLANK(fact_customer_tickets[Escalation_ID])))
+		formatString: 0
+		lineageTag: 6a171e45-05bb-4366-b27b-fcfd4ede2357
+
+	measure Tickets_Pending = CALCULATE(DISTINCTCOUNT(fact_customer_tickets[Ticket_ID]),iSBLANK(fact_customer_tickets[Resolution_Time]))
+		formatString: 0
+		lineageTag: b803ef90-0554-4358-8ea4-abade78e767b
+
+	measure 'Avg Resolution_Time' = AVERAGE(fact_customer_tickets[Resolution_Time])
+		lineageTag: e9a69e7b-998c-4286-b9b9-eeeacec7aa02
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Response_Time' = AVERAGE(fact_customer_tickets[Response_Time])
+		lineageTag: 1159f8f6-2904-4504-8f48-073f6f0a4dc6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Customer Satisfaction Score' = AVERAGE(fact_customer_tickets[Customer_Satisfaction_Score])
+		lineageTag: 623f9fe4-3b03-4428-96a1-c51af3df0ce3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'High Satisfaction Tickets' = CALCULATE(DISTINCTCOUNT(fact_customer_tickets[Ticket_ID]),fact_customer_tickets[Customer_Satisfaction_Score] >= 4)
+		formatString: 0
+		lineageTag: 81cfeb8f-2e83-4076-9a6b-38af0a01fce4
+
+	measure '_Up Arrow' =
+			
+			"▲"
+		lineageTag: 2a37149f-74e2-4e00-b189-e86b9b6a57a8
+
+	measure '_Down Arrow' =
+			
+			"▼"
+		lineageTag: e9357be6-ccca-4a95-a796-d49c88999e68
+
+	measure 'total_Tickets PY' =
+			
+			CALCULATE ( [Total_Tickets], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		formatString: 0
+		lineageTag: 42827617-892b-4ab8-9598-871a158ae45c
+
+	measure 'Total_Tickets Diff (CY vs PY)' =
+			
+			[Total_Tickets] - [total_Tickets PY]
+		formatString: 0
+		lineageTag: 3f43d7bf-26cb-4e27-9a3f-9c8ae1383cc1
+
+	measure '% Total_Tickets Diff(CY vs PY)' = DIVIDE ( [Total_Tickets Diff (CY vs PY)], [total_Tickets PY] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 9d69746d-657e-4566-9927-efab1c28ba20
+
+	measure 'Total_Tickets PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% Total_Tickets Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% Total_Tickets Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 9e307812-98dd-469e-8f22-bb3d8c92e316
+
+	measure Measure
+		lineageTag: c06a158a-3bd6-4c6a-a195-a95bb4f1750c
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure 'Escalated_Tickets PY' =
+			
+			CALCULATE ( [Tickets_Escalated], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		formatString: 0
+		lineageTag: 625178a4-099a-430a-a09c-9b7753b60e71
+
+	measure 'Escalated Tickets Diff (CY vs PY)' =
+			
+			[Tickets_Escalated] - [Escalated_Tickets PY]
+		formatString: 0
+		lineageTag: f9aa0955-8af7-4937-873b-9648f5dae0c8
+
+	measure '% Escalated Tickets Diff(CY vs PY)' = DIVIDE ( [Escalated Tickets Diff (CY vs PY)], [Escalated_Tickets PY] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 13a8b5d4-f543-4643-8ec0-fe33712ec308
+
+	measure 'Escalated Tickets PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% Escalated Tickets Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% Escalated Tickets Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 6991c325-21af-4c6a-8a2c-cdc3edc9fa2b
+
+	measure 'Pending Tickets PY' =
+			
+			CALCULATE ( [Tickets_Pending], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		formatString: 0
+		lineageTag: 7efb7c29-db36-4b0f-b310-340369cb73fb
+
+	measure 'Pending Tickets Diff (CY vs PY)' =
+			
+			[Tickets_Pending] - [Pending Tickets PY]
+		formatString: 0
+		lineageTag: e906e010-cf7c-4ee8-b8a2-309ceb8c521d
+
+	measure '% Pending Tickets Diff(CY vs PY)' = DIVIDE ( [Pending Tickets Diff (CY vs PY)], [Pending Tickets PY] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 39860838-3ac1-4007-a527-61b6c5f4fd47
+
+	measure 'Pending Tickets PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% Pending Tickets Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% Pending Tickets Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 44ea437b-513e-488c-8a25-2ce05d521b57
+
+	measure 'Tickets Resolved PY' =
+			
+			CALCULATE ( [Tickets_Resolved], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		formatString: 0
+		lineageTag: 5ce6c11b-276e-44ab-9a09-6df68a14490e
+
+	measure 'Tickets Resolved Diff (CY vs PY)' =
+			
+			[Tickets_Resolved] - [Tickets Resolved PY]
+		formatString: 0
+		lineageTag: c54248c9-57e4-4979-935a-7ce0f5dac6ca
+
+	measure '% Tickets Resolved Diff(CY vs PY)' = DIVIDE ( [Tickets Resolved Diff (CY vs PY)], [Tickets Resolved PY] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2676da46-5e7a-497d-a4d9-bf69eb257819
+
+	measure 'Tickets Resolved PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% Tickets Resolved Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% Tickets Resolved Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 51b820aa-fb9f-421b-b727-31de86f6d943
+
+	measure 'Avg Resolution Time PY' =
+			
+			CALCULATE ( [Avg Resolution_Time], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		lineageTag: c35d7056-788f-48a4-8380-519d8769b154
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Resolution Time Diff (CY vs PY)' =
+			
+			[Avg Resolution_Time] - [Avg Resolution Time PY]
+		lineageTag: d7a5ef29-2615-411f-b84d-54e18236ea31
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Avg Resolution Time Diff(CY vs PY)' = DIVIDE ( [Avg Resolution Time Diff (CY vs PY)], [Avg Resolution Time PY] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 9b01f8fe-d32e-484d-9dc6-b46d47e43ffd
+
+	measure 'Avg Resolution Time PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% Avg Resolution Time Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% Avg Resolution Time Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 3caf8b7a-31e0-4930-85ad-51b13ea7558d
+
+	measure 'High Satisfaction Rate PY' =
+			
+			CALCULATE ( [High Satisfaction Tickets], DATEADD ( 'Dim_Calendar'[Date], -1, YEAR ) )
+		formatString: 0
+		lineageTag: 1b2812b2-6ffc-458d-addb-c97a82363a1d
+
+	measure 'High Satisfaction Rate Diff (CY vs PY)' =
+			
+			[High Satisfaction Tickets] - [High Satisfaction Rate PY]
+		formatString: 0
+		lineageTag: c4e875d0-3645-4adf-a44c-747a38351f94
+
+	measure '% High Satisfaction Diff(CY vs PY)' = DIVIDE ( [High Satisfaction Rate Diff (CY vs PY)], [High Satisfaction Rate PY] )
+		lineageTag: d4a08e68-8fe2-4a05-a16f-554c78f19de0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'High Satisfaction Rate PY KPI' =
+			
+			IF (
+			    [Is Date Filtered] = 1,
+			    COMBINEVALUES (
+			        " ",
+			        "PY:",
+			        IF ( [% High Satisfaction Diff(CY vs PY)] > 0, [_Up Arrow], [_Down Arrow] ),
+			        FORMAT ( [% High Satisfaction Diff(CY vs PY)], "Percent" )
+			    ),
+			    ""
+			)
+		lineageTag: 8b8964d1-512c-4069-8eef-093d5cb46e51
+
+	measure 1 = "Avg Response Time(Hrs)"
+		lineageTag: 60682ab8-8f76-4781-9126-18c6de8b6762
+
+	measure 2 = "Avg Resolution Time(Hrs)"
+		lineageTag: 56e459eb-1187-4331-825f-b7d25293cc07
+
+	measure 3 = "Avg Customer Satisfaction Score"
+		lineageTag: e1491ac8-5682-4bf1-a6ac-6086c57e3fad
+
+	measure 4 = "Average Response Time by Region"
+		lineageTag: 987178bf-b635-4445-a15b-a2bdf3c8fe41
+
+	measure 5 = "Average Resolution Time by Region"
+		lineageTag: 84563bf3-46e7-4394-aab8-d2f1b772749f
+
+	measure 6 = "Average Customer Satisfaction Score by Region"
+		lineageTag: f37b1613-25ca-4591-9f88-06281f793434
+
+	measure 7 = "Avg Resolution Time by Year and Month"
+		lineageTag: bdad61fa-5469-4164-a4b7-e90c8def1c49
+
+	measure 8 = "Total Tickets by Customer type & Escalation Type "
+		lineageTag: f96590a9-c5c3-4a37-89d8-9d04230d9166
+
+	measure 9 = "Total Tickets by Customer type on Priority wise"
+		lineageTag: 2197245b-c5a2-4c72-b364-a806e723ba99
+
+	column Ticket_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: aaf91caa-f308-4bb8-ba5a-23c040865bb3
+		summarizeBy: count
+		sourceColumn: Ticket_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: c5d5588f-172b-41ac-8f6b-c52425ee1df9
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Issue_Type_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 7369a0d7-1932-45d4-8c18-8e35edf9303b
+		summarizeBy: none
+		sourceColumn: Issue_Type_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: fb4459cb-bfed-4309-84af-15d538b23f31
+		summarizeBy: count
+		sourceColumn: Date_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Escalation_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: e4e0d4c7-b994-4555-bbe6-ebf33bd52f0a
+		summarizeBy: none
+		sourceColumn: Escalation_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Response_Time
+		dataType: int64
+		formatString: 0
+		lineageTag: 374b8880-9e1d-4e8e-bba3-9a499bbc9eb8
+		summarizeBy: sum
+		sourceColumn: Response_Time
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Satisfaction_Score
+		dataType: int64
+		formatString: 0
+		lineageTag: e32a576d-1b5f-48ec-9a19-c64ded3dc910
+		summarizeBy: sum
+		sourceColumn: Customer_Satisfaction_Score
+
+		annotation SummarizationSetBy = Automatic
+
+	column Resolution_Time
+		dataType: int64
+		formatString: 0
+		lineageTag: 1f4662c1-3fcd-48a0-9b85-7961e30979d0
+		summarizeBy: sum
+		sourceColumn: Resolution_Time
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: dd-mm-yyyy
+		lineageTag: d544850a-50f8-489a-b2ab-aa221ff28b3c
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition fact_customer_tickets = m
+		mode: import
+		source =
+				let
+				    Source = Databricks.Catalogs("adb-6672695159677553.13.azuredatabricks.net", "sql/protocolv1/o/6672695159677553/0620-124008-9oevs18i", [Catalog=null, Database=null, EnableAutomaticProxyDiscovery=null]),
+				    hive_metastore_Database = Source{[Name="hive_metastore",Kind="Database"]}[Data],
+				    nokia_poc_Schema = hive_metastore_Database{[Name="nokia_poc",Kind="Schema"]}[Data],
+				    fact_customer_tickets_Table = nokia_poc_Schema{[Name="fact_customer_tickets",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(fact_customer_tickets_Table,{{"Ticket_ID", Int64.Type}, {"Customer_ID", Int64.Type}, {"Issue_Type_ID", Int64.Type}, {"Date_ID", Int64.Type}, {"Escalation_ID", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
